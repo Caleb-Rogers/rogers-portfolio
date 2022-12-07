@@ -1,11 +1,26 @@
-import React from "react";
+// src/App.js
 
-const App = () =>{
-    return (
-        <h1>
-            Welcome to React App thats build using Webpack and Babel separately
-        </h1>
-    )
+import React, { Component } from "react";
+import '../public/styles/styles.css';
+
+class App extends Component {
+    state = {
+        counter: 0
+    };
+
+    handleClick = () => {
+        this.setState(prevState => {
+            return { counter: prevState.counter + 1 };
+        });
+    };
+    render() {
+        return (
+            <div className="App">
+                <h1>I'm configuring setting up Webpack!!!</h1>
+                <p>{`The count now is: ${this.state.counter}`}</p>
+                <button onClick={this.handleClick}>Click me</button>
+            </div>
+        );
+    }
 }
-
-export default App
+export default App;
