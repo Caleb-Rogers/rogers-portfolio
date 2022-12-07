@@ -1,26 +1,11 @@
-// src/index.js
+import { hot } from "react-hot-loader/root";
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./components/App";
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from '../App';
+import "./components/Layout.css";
 
-const rootId = document.getElementById("root");
+const render = (Component) =>
+  ReactDOM.render(<Component />, document.getElementById("root"));
 
-ReactDOM.render(
-    <React.StrictMode>
-    <App />
-    </React.StrictMode>,
-    rootId
-);
-
-if (module.hot && process.env.NODE_ENV === "development") {
-    module.hot.accept("./App", () => {
-    const NextApp = require("../App").default;
-    ReactDOM.render(
-        <React.StrictMode>
-        <App />
-        </React.StrictMode>,
-        rootId
-    );
-    });
-}
+render(hot(App));

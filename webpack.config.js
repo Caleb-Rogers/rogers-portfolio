@@ -1,43 +1,63 @@
-// webpack.config.js
+var path = require('path');
 
-const path = require("path");
-const webpack = require("webpack");
-const { merge } = require("webpack-merge");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const modeConfiguration = env => require(`./build-utils/webpack.${env}`)(env);
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-module.exports = ({ mode } = { mode: "production" }) => {
-    console.log(`mode is: ${mode}`);
+const port = process.env.PORT || 3000;
 
-    return merge(
-        {
-            mode,
-            entry: "./src/index.js",
-            devServer: {
-                hot: true,
-                open: true
+module.exports = {
+  mode: 'development',  
+  entry: './src/index.js',
+  output: {
+    filename: 'bundle.[fullhash].js',
+    publicPath: "/build/",
+    path: path.join(__dirname, 'build')
+  },
+  resolve: {
+    alias: {
+        "react-dom": "@hot-loader/react-dom",
+    },
+  },
+  target: 'web', 
+  devtool: 'inline-source-map',
+  module: {
+    rules: [
+      {
+        test: /\.(js)$/,
+        exclude: /node_modules/,
+        use: ['babel-loader']
+      },
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: 'style-loader'
+          },
+          {
+            loader: require.resolve('css-loader'),
+            options: {
+                importLoaders: 1,
+                modules: true,
+                modules : {
+                localIdentName: '[name]__[local]__[fullhash:base64:5]',
+                },
             },
-            output: {
-                publicPath: "/",
-                path: path.resolve(__dirname, "build"),
-                filename: "bundle.js"
-            },
-            module: {
-                rules: [
-                    {
-                        test: /\.(js|jsx)$/,
-                        exclude: /node_modules/,
-                        loader: "babel-loader"
-                    }
-                ]
-            },
-            plugins: [
-                new HtmlWebpackPlugin({
-                    template: "./public/index.html"
-                }),
-                new webpack.HotModuleReplacementPlugin()
-            ]
-        },
-        modeConfiguration(mode)
-    );
+          }
+        ]
+      }
+    ]
+  },
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new HtmlWebpackPlugin({
+      template: 'public/index.html',
+      favicon: 'public/devil-icon.png'
+    })
+  ],
+  devServer: {
+    host: 'localhost',
+    port: port,
+    historyApiFallback: true,
+    open: true
+  }
 };
