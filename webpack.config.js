@@ -2,46 +2,42 @@
 
 const path = require("path");
 const webpack = require("webpack");
+const { merge } = require("webpack-merge");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const modeConfiguration = env => require(`./build-utils/webpack.${env}`)(env);
 
 module.exports = ({ mode } = { mode: "production" }) => {
     console.log(`mode is: ${mode}`);
 
-    return {
+    return merge(
+        {
             mode,
-            entry: "./src/App.js",
+            entry: "./src/index.js",
             devServer: {
                 hot: true,
                 open: true
             },
             output: {
                 publicPath: "/",
-                path: path.resolve(__dirname, "dist"),
+                path: path.resolve(__dirname, "build"),
                 filename: "bundle.js"
             },
-            watch: true,
             module: {
                 rules: [
                     {
                         test: /\.(js|jsx)$/,
                         exclude: /node_modules/,
                         loader: "babel-loader"
-                    },
-                    {
-                        test: /\.css$/i,
-                        use: ['style-loader', 'css-loader']
                     }
                 ]
             },
             plugins: [
                 new HtmlWebpackPlugin({
-                    template: './src/index.html',
-                    title: 'React Portfolio Website',
-                    filename: 'index.html',
-                    inject: 'body',
+                    template: "./public/index.html"
                 }),
                 new webpack.HotModuleReplacementPlugin()
             ]
-        }
-
+        },
+        modeConfiguration(mode)
+    );
 };
